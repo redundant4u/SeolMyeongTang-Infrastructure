@@ -1,0 +1,5 @@
+Host terminal
+  Hostname terminal
+  User seol
+  IdentityFile ~/.ssh/terminal
+  Port 22

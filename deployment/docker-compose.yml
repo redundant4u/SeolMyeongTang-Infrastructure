@@ -1,0 +1,40 @@
+version: "3.5"
+
+services:
+  client:
+    container_name: smt
+    image: smt:prod
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./docker/data/nginx/build:/home
+      - ./docker/data/nginx/conf:/etc/nginx/conf.d
+      - ./docker/data/nginx/ssl:/etc/letsencrypt
+    command: sh -c "nginx && tail -f /dev/null"
+
+  server:
+    container_name: smt-server
+    image: smt-server:prod
+    volumes:
+      - ssh-key:/root/.ssh
+    ports:
+      - 3000:3000
+    command: tail -f /dev/null
+
+  terminal:
+    container_name: terminal
+    image: terminal:prod
+    volumes:
+      - ssh-key:/home/seol/.ssh
+    privileged: true
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 32M
+    ports:
+      - 22:22
+
+volumes:
+  ssh-key:
