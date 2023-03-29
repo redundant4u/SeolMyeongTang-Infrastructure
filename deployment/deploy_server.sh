@@ -9,6 +9,8 @@ fi
 ### Pull Docker Image From ECR
 ECR_URL=$(aws sts get-caller-identity --query Account --output text).dkr.ecr.ap-northeast-2.amazonaws.com
 
+aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin $ECR_URL
+
 docker pull $ECR_URL/smt-server:$1
 docker tag $ECR_URL/smt-server:$1 smt-server:prod
 

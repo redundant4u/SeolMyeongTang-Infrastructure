@@ -33,8 +33,8 @@ services:
         limits:
           cpus: "0.5"
           memory: 32M
-    ports:
-      - 22:22
+    expose:
+      - 22
 
 volumes:
   ssh-key:
