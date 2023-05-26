@@ -2,7 +2,7 @@
 
 WORKDIR="/home/seol"
 
-useradd -U -u 999 -d ${WORKDIR} -m -l seol
+useradd -U -u 999 -d ${WORKDIR} -l seol
 
 ### Disable Linux command
 mkdir -p ${WORKDIR}/bin
@@ -35,7 +35,6 @@ mv ${WORKDIR}/.ssh/terminal.pub ${WORKDIR}/.ssh/authorized_keys
 
 chmod 644 ${WORKDIR}/.ssh/authorized_keys
 chmod 400 ${WORKDIR}/.ssh/terminal
-
 
 ### Clean up
 rm ./script.sh
