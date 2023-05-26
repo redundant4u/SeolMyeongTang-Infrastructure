@@ -16,7 +16,7 @@ touch ${WORKDIR}/.hushlogin
 
 ### Set bashrc & Welcome Message
 mv /bashrc ${WORKDIR}/.bashrc
-mv /about ${WORKDIR}/about
+mv /me ${WORKDIR}/me
 
 ### Disable bash Auto Completion
 echo "set disable-completion on" >> ${WORKDIR}/.inputrc

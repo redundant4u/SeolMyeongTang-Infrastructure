@@ -10,7 +10,7 @@ services:
     volumes:
       - ./docker/data/nginx/build:/home
       - ./docker/data/nginx/conf:/etc/nginx/conf.d
-      - ./docker/data/nginx/ssl:/etc/letsencrypt
+      - ./docker/data/nginx/ssl/letsencrypt:/etc/letsencrypt
     command: sh -c "nginx && tail -f /dev/null"
 
   server:
