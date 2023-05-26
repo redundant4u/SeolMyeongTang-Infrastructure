@@ -35,6 +35,8 @@ services:
           memory: 32M
     expose:
       - 22
+    command: tail -f /dev/null
+    init: true
 
 volumes:
   ssh-key:
