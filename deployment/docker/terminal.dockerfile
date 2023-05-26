@@ -1,16 +1,17 @@
 FROM ubuntu:22.04
 
-RUN useradd -U -u 999 -d /home/seol -m -l seol && \
-    mkdir -p /home/seol/bin && \
-    cp /bin/ls /home/seol/bin/ls && \
-    cp /bin/cat /home/seol/bin/cat && \
-    cp /bin/clear /home/seol/bin/clear && \
-    rm /home/seol/.bash_logout /home/seol/.profile
+WORKDIR /home/seol
 
-COPY docker/data/terminal/me /home/seol/me
-COPY docker/data/terminal/bashrc /home/seol/.bashrc
-COPY docker/data/terminal/inputrc /home/seol/.inputrc
+RUN apt-get update && apt-get install openssh-server -y
+
+COPY \
+    docker/data/terminal/me \
+    docker/data/terminal/bashrc \
+    docker/data/terminal/bash_profile \
+    docker/data/terminal/inputrc \
+    docker/data/terminal/script.sh \
+    ./
+
+RUN ./script.sh
 
 USER seol
-
-WORKDIR /home/seol

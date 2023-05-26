@@ -14,18 +14,13 @@ cp /bin/clear ${WORKDIR}/bin/clear
 ### Remove SSH Welcome Message
 touch ${WORKDIR}/.hushlogin
 
-### Set bashrc & Welcome Message
-mv /bashrc ${WORKDIR}/.bashrc
-mv /me ${WORKDIR}/me
-
-### Disable bash Auto Completion
-echo "set disable-completion on" >> ${WORKDIR}/.inputrc
+### Set bash settings
+mv bashrc .bashrc
+mv bash_profile .bash_profile
+mv inputrc .inputrc
 
 ### Set rbash
 chsh -s /bin/rbash seol
-
-### Instal SSH
-apt-get update && apt-get install openssh-server -y
 
 ### Configure SSH Setting
 sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/g' /etc/ssh/sshd_config
@@ -40,3 +35,7 @@ mv ${WORKDIR}/.ssh/terminal.pub ${WORKDIR}/.ssh/authorized_keys
 
 chmod 644 ${WORKDIR}/.ssh/authorized_keys
 chmod 400 ${WORKDIR}/.ssh/terminal
+
+
+### Clean up
+rm ./script.sh
