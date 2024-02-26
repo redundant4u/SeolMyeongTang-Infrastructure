@@ -1,9 +1,8 @@
-FROM nginx:1.23-alpine
+FROM nginx:1.25-alpine
 
 WORKDIR /home
 
-ENV NODE_ENV=prod \
-    TZ=Asia/Seoul
+ENV TZ=Asia/Seoul
 
 RUN apk add --no-cache tzdata && \
     cp /usr/share/zoneinfo/$TZ /etc/localtime && \

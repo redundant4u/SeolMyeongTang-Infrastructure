@@ -8,7 +8,6 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ./docker/data/nginx/build:/home
       - ./docker/data/nginx/conf:/etc/nginx/conf.d
       - ./docker/data/nginx/ssl/letsencrypt:/etc/letsencrypt
     command: sh -c "nginx && tail -f /dev/null"
@@ -21,6 +20,10 @@ services:
     ports:
       - 3000:3000
     command: tail -f /dev/null
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
   terminal:
     container_name: terminal
