@@ -10,7 +10,6 @@ RUN apk add --no-cache tzdata build-base python3 openssh-client && \
     echo $TZ > /etc/timezone && \
     npm i -g pnpm pm2
 
-COPY docker/data/node/config /root/.ssh/config
 COPY docker/data/node/SeolMyeongTang-Server/socket .
 
 RUN pnpm i
