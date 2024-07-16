@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: seol
+  name: chat-live
+spec:
+  selector:
+    app: chat-live
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: chat-live
+  type: ClusterIP

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: seol
+  name: seol-chat-db
+spec:
+  selector:
+    app: seol-db
+  ports:
+    - port: 5432
+      targetPort: 5432
+      name: pg
+  type: ClusterIP

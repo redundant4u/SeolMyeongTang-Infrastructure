@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metatdata:
+  namespace: seol
+  name: chat-live
+spec:
+  selector:
+    matchLabels:
+      app: chat-live
+  template:
+    metadata:
+      labels:
+        app: chat-live
+    spec:
+      containers:
+        - name: chat-live
+          image: 982402893832.dkr.ecr.ap-northeast-2.amazonaws.com/smt-chat:dev
+          imagePullPolicy: Always
+          env:
+            - name: NODE_ENV
+              value: "development"
+          envFrom:
+            - secretRef:
+                name: seol-chat-live-secret
