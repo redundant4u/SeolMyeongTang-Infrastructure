@@ -1,6 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
-metatdata:
+metadata:
   namespace: seol
   name: chat-live
 spec:
@@ -22,3 +22,5 @@ spec:
           envFrom:
             - secretRef:
                 name: seol-chat-live-secret
+      imagePullSecrets:
+        - name: aws-ecr-secret

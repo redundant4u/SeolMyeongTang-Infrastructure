@@ -5,7 +5,7 @@ metadata:
   name: seol-chat-redis
 spec:
   selector:
-    app: seol-redis
+    app: seol-chat-redis
   ports:
     - port: 6379
       targetPort: 6379

@@ -22,7 +22,7 @@ spec:
               value: C.UTF-8
           envFrom:
             - secretRef:
-              name: seol-chat-db-secret
+                name: seol-chat-db-secret
           volumeMounts:
             - name: seol-chat-db-init-sql-cm
               mountPath: /docker-entrypoint-initdb.d
