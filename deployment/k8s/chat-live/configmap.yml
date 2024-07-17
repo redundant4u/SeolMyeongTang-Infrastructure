@@ -10,3 +10,15 @@ data:
       content VARCHAR(255) NOT NULL,
       created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: seol
+  name: seol-chat-live-cm
+data:
+  NODE_ENV: "development"
+  PORT: "8080"
+  CHAT_WS_PATH: "/ws/chat"

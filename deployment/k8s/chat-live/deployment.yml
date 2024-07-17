@@ -14,12 +14,11 @@ spec:
     spec:
       containers:
         - name: chat-live
-          image: 982402893832.dkr.ecr.ap-northeast-2.amazonaws.com/smt-chat:dev
+          image: 982402893832.dkr.ecr.ap-northeast-2.amazonaws.com/smt-chat-live:dev
           imagePullPolicy: Always
-          env:
-            - name: NODE_ENV
-              value: "development"
           envFrom:
+            - configMapRef:
+                name: seol-chat-live-cm
             - secretRef:
                 name: seol-chat-live-secret
       imagePullSecrets:
