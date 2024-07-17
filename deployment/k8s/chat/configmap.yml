@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: seol
+  name: seol-chat-cm
+data:
+  GIN_MODE: "development"
+  HOST: "localhost"
+  PORT: "8080"

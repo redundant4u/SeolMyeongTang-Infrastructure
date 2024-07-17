@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: seol
+  name: chat
+spec:
+  selector:
+    matchLabels:
+      app: chat
+  template:
+    metadata:
+      labels:
+        app: chat
+    spec:
+      containers:
+        - name: chat
+          image: 982402893832.dkr.ecr.ap-northeast-2.amazonaws.com/smt-chat:dev
+          imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: seol-chat-secret
+            - configMapRef:
+                name: seol-chat-cm
+      imagePullSecrets:
+        - name: aws-ecr-secret
