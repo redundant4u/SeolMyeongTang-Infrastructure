@@ -2,11 +2,19 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   namespace: seol
-  name: seol-ingrses
+  name: seol-http-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: "dev-issuer"
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
+  tls:
+  - hosts:
+    - sub.redundant4u.com
+    secretName: sub-redundant4u-com-tls
   rules:
-  - http:
+  - host: sub.redundant4u.com
+    http:
       paths:
       - path: /chat
         pathType: Prefix
@@ -16,22 +24,27 @@ spec:
             port:
               number: 8000
 
-
 ---
 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   namespace: seol
-  name: seol-socket-ingrses
+  name: seol-socket-ingress
   annotations:
+    cert-manager.io/cluster-issuer: "dev-issuer"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-body-size: "10m"
 spec:
   ingressClassName: nginx
+  tls:
+  - hosts:
+    - sub.redundant4u.com
+    secretName: sub-redundant4u-com-tls
   rules:
-  - http:
+  - host: sub.redundant4u.com
+    http:
       paths:
       - path: /ws/chat
         pathType: Prefix
@@ -40,3 +53,59 @@ spec:
             name: chat-live
             port:
               number: 8080
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: seol
+  name: seol-utils-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: "dev-issuer"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - sub.redundant4u.com
+    secretName: sub-redundant4u-com-tls
+  rules:
+  - host: sub.redundant4u.com
+    http:
+      paths:
+      - path: /jenkins
+        pathType: Prefix
+        backend:
+          service:
+            name: jenkins
+            port:
+              number: 9090
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argocd-ingress
+  namespace: argocd
+  annotations:
+    cert-manager.io/cluster-issuer: "dev-issuer"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - sub.redundant4u.com
+    secretName: sub-redundant4u-com-tls
+  rules:
+  - host: sub.redundant4u.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: argocd-server
+            port:
+              number: 443
