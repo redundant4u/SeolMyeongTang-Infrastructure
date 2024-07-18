@@ -1,0 +1,22 @@
+namespace: seol
+
+app:
+  name: chat-live
+  image: ""
+  port: 8080
+
+configMap:
+  name: seol-chat-live-cm
+  node_env: development
+  port: 8080
+  chat_ws_path: /ws/chat
+
+secret:
+  name: seol-chat-live-secret
+  db_host: ""
+  db_user: ""
+  db_password: ""
+  db_name: ""
+  db_port: ""
+  redis_host: ""
+  redis_port: ""
