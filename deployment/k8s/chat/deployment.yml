@@ -16,10 +16,13 @@ spec:
         - name: chat
           image: 982402893832.dkr.ecr.ap-northeast-2.amazonaws.com/smt-chat:dev
           imagePullPolicy: Always
-          envFrom:
-            - secretRef:
-                name: seol-chat-secret
-            - configMapRef:
-                name: seol-chat-cm
+          volumeMounts:
+            - name: seol-chat-secret
+              mountPath: /go/local.env
+              subPath: local.env
+      volumes:
+        - name: seol-chat-secret
+            secret:
+              secretName: seol-chat-secret
       imagePullSecrets:
         - name: aws-ecr-secret
