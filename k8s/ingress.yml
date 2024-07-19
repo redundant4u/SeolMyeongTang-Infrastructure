@@ -60,9 +60,10 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   namespace: seol
-  name: seol-utils-ingress
+  name: seol-jenkins-ingress
   annotations:
     cert-manager.io/cluster-issuer: "dev-issuer"
+    nginx.ingress.kubernetes.io/whitelist-source-range: "X.X.X.X/32"
 spec:
   ingressClassName: nginx
   tls:
@@ -92,6 +93,7 @@ metadata:
     cert-manager.io/cluster-issuer: "dev-issuer"
     nginx.ingress.kubernetes.io/ssl-passthrough: "true"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/whitelist-source-range: "X.X.X.X/32"
 spec:
   ingressClassName: nginx
   tls:
