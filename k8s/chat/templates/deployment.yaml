@@ -22,7 +22,7 @@ spec:
               subPath: local.env
       volumes:
         - name: {{ .Values.secret.name }}
-            secret:
-              secretName: {{ .Values.secret.name }}
+          secret:
+            secretName: {{ .Values.secret.name }}
       imagePullSecrets:
         - name: aws-ecr-secret
