@@ -1,0 +1,21 @@
+namespace: seol
+
+app:
+  name: seol-chat-db
+  replicas: 1
+  port: ""
+
+configMap:
+  name: seol-chat-db-init-sql-cm
+  initSql: |
+    CREATE TABLE IF NOT EXISTS chats (
+      id SERIAL PRIMARY KEY,
+      content VARCHAR(255) NOT NULL,
+      created_at TIMESTAMP NOT NULL DEFAULT NOW()
+    );
+
+secret:
+  name: seol-chat-db-secret
+  postgres_db: ""
+  postgres_user: ""
+  postgres_password: ""

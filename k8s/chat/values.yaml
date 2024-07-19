@@ -1,11 +1,13 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  namespace: seol
+namespace: seol
+
+app:
+  name: chat
+  image: ""
+  port: ""
+
+secret:
   name: seol-chat-secret
-type: Opaque
-stringData:
-  local.env: |
+  env: |
     GIN_MODE: "debug"
     HOST: "0.0.0.0"
     PORT: "8000"

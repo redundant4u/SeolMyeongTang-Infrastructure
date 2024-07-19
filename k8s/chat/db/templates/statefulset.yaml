@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: {{ .Values.namespace }}
+  name: {{ .Values.app.name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}
+  serviceName: {{ .Values.app.name }}
+  replicas: {{ .Values.app.replicas }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}
+    spec:
+      containers:
+        - name: {{ .Values.app.name }}
+          image: postgres:16-alpine
+          env:
+            - name: LC_ALL
+              value: C.UTF-8
+          envFrom:
+            - secretRef:
+                name: {{ .Values.secret.name }}
+          volumeMounts:
+            - name: {{ .Values.configMap.name }}
+              mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: {{ .Values.configMap.name }}
+          configMap:
+            name: {{ .Values.configMap.name }}

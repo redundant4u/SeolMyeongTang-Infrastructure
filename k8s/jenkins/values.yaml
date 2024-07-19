@@ -1,0 +1,6 @@
+namespace: seol
+
+app:
+  name: jenkins
+  ip: 172.30.1.26
+  port: 9090

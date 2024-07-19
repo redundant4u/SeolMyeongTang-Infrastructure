@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ .Values.namespace }}
+  name: {{ .Values.app.name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}
+    spec:
+      containers:
+        - name: {{ .Values.app.name }}
+          image: {{ .Values.app.image }}
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: {{ .Values.secret.name }}
+              mountPath: /go/local.env
+              subPath: local.env
+      volumes:
+        - name: {{ .Values.secret.name }}
+            secret:
+              secretName: {{ .Values.secret.name }}
+      imagePullSecrets:
+        - name: aws-ecr-secret

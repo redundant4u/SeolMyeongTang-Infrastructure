@@ -1,0 +1,6 @@
+namespace: seol
+
+app:
+  name: seol-chat-redis
+  port: ""
+  replicas: 1

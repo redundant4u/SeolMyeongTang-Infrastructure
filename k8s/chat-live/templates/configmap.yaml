@@ -5,5 +5,5 @@ metadata:
   name: {{ .Values.configMap.name }}
 data:
   NODE_ENV: {{ .Values.configMap.node_env }}
-  PORT: {{ .Values.configMap.port }}
+  PORT: {{ .Values.app.port | quote }}
   CHAT_WS_PATH: {{ .Values.configMap.chat_ws_path }}
