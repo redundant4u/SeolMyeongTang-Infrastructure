@@ -4,6 +4,7 @@ app:
   name: chat-live
   image: ""
   port: 8080
+  replicas: 2
 
 configMap:
   name: seol-chat-live-cm
