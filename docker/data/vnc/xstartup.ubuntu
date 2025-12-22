@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# 기존 세션 관련 변수 초기화
+unset SESSION_MANAGER
+unset DBUS_SESSION_BUS_ADDRESS
+
+# [중요] 그놈 설정을 위한 환경 변수
+export XDG_CURRENT_DESKTOP="GNOME-Flashback:GNOME"
+export XDG_MENU_PREFIX="gnome-flashback-"
+export XDG_SESSION_TYPE=x11
+export GDK_BACKEND=x11
+
+# [중요] 그놈 세션이 실패할 경우를 대비해 설정 데몬을 먼저 실행 시도
+/usr/lib/gnome-settings-daemon/gnome-settings-daemon &
+
+# metacity &
+
+# [핵심 수정] dbus-launch를 통해 DBus 세션을 생성하고 그 안에서 gnome-session 실행
+# --exit-with-session: gnome-session이 끝나면 dbus도 같이 종료
+exec dbus-launch --exit-with-session \
+    gnome-session --session=gnome-flashback-metacity --disable-acceleration-check
