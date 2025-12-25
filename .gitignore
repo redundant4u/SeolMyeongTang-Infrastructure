@@ -2,3 +2,5 @@
 SeolMyeongTang-Server
 build
 ssl
+
+k8s/**/*secret*
