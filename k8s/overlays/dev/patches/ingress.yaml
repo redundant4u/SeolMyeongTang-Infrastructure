@@ -8,10 +8,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - dev.redundant4u.com
+        - dev-api.redundant4u.com
       secretName: api-redundant4u-tls-secret
   rules:
-    - host: dev.redundant4u.com
+    - host: dev-api.redundant4u.com
       http:
         paths:
           - path: /
