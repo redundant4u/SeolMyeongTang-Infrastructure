@@ -20,6 +20,13 @@ spec:
                 name: smt
                 port:
                   number: 8090
+          - path: /post
+            pathType: Prefix
+            backend:
+              service:
+                name: dummy-svc 
+                port:
+                  number: 11111
           - path: /vnc
             pathType: Prefix
             backend:
