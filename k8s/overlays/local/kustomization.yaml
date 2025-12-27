@@ -5,12 +5,17 @@ namespace: smt-local
 
 resources:
   - ../../base
+  - sealed-secrets.yaml
 
 images:
   - name: smt
     newTag: "2.0.0"
+
   - name: vnc-proxy
     newTag: "1.0.0"
+  
+  - name: squid
+    newTag: "6.13"
 
 configMapGenerator:
   - name: vnc-proxy-cm
@@ -18,35 +23,6 @@ configMapGenerator:
     literals:
       - K8S_NAMESPACE=smt-local
 
-secretGenerator:
-  - name: vnc-gateway-cf-warp-secret
-    envs:
-      - cf-warp-key.txt
-  - name: smt-secret
-    files:
-      - .env=smt-secret.txt
-
 patches:
-  - patch: |
-      apiVersion: networking.k8s.io/v1
-      kind: Ingress
-      metadata:
-        name: smt-ing
-      spec:
-        rules:
-          - http:
-              paths:
-                - path: /
-                  pathType: Prefix
-                  backend:
-                    service:
-                      name: smt
-                      port:
-                        number: 8090
-                - path: /vnc
-                  pathType: Prefix
-                  backend:
-                    service:
-                      name: vnc-proxy
-                      port:
-                        number: 8080
+  - path: patches/ingress.yaml
+      
