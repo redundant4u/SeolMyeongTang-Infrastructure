@@ -1,0 +1,16 @@
+global:
+  namespace: cicd
+  image:
+    tag: "v3.2.2"
+
+configs:
+  cm:
+    kustomize.buildOptions: "--enable-helm"
+
+server:
+  service:
+    type: NodePort
+    nodePortHttps: 30443
+    nodePortHttp: 30080
+  extraArgs:
+    - --insecure
