@@ -10,6 +10,7 @@ helmCharts:
     namespace: kube-system
     repo: https://charts.bitnami.com/bitnami
     version: "2.5.19"
+    includeCRDs: true
     valuesFile: values/sealed-secrets.yaml
 
   - name: cert-manager
