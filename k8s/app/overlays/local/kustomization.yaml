@@ -5,7 +5,7 @@ namespace: smt-local
 
 resources:
   - ../../base
-  - sealed-secrets.yaml
+  - secrets/sealed-smt-server-secret.yaml
 
 images:
   - name: smt

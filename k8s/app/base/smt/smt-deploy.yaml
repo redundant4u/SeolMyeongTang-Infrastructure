@@ -25,6 +25,6 @@ spec:
       volumes:
         - name: smt-env
           secret:
-            secretName: smt-secret
+            secretName: smt-server-secret
       serviceAccountName: smt-sa
       automountServiceAccountToken: true
