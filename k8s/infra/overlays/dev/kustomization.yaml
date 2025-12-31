@@ -14,9 +14,9 @@ helmCharts:
     version: "5.8.114"
     valuesFile: values/jenkins.yaml
 
-  - name: argo-cd
-    releaseName: argocd
-    namespace: cicd
-    repo: https://argoproj.github.io/argo-helm
-    version: "9.1.6"
-    valuesFile: values/argocd.yaml
+  # - name: argo-cd
+  #   releaseName: argocd
+  #   namespace: cicd
+  #   repo: https://argoproj.github.io/argo-helm
+  #   version: "9.1.6"
+  #   valuesFile: values/argocd.yaml
