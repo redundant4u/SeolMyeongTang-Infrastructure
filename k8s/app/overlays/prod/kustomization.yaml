@@ -6,7 +6,6 @@ namespace: smt-prod
 resources:
   - ../../base
   - secrets/sealed-smt-server-secret.yaml
-  - secrets/sealed-smt-aws-ecr-secret.yaml
   - cluster-issuer.yaml
 
 images:
