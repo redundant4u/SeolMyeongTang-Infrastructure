@@ -6,7 +6,7 @@ namespace: smt-dev
 resources:
   - ../../base
   - secrets/sealed-smt-server-secret.yaml
-  - secrets/sealed-smt-aws-ecr-secret.yaml
+  - secrets/sealed-aws-ecr-secret.yaml
   - cluster-issuer.yaml
   - traefik-ip-whitelist.yaml
 
