@@ -6,5 +6,4 @@ resources:
   - vnc
   - vnc-proxy
   - vnc-gateway
-  - ecr-secret-updater
   - ingress.yaml
