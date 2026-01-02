@@ -3,9 +3,11 @@ kind: PersistentVolumeClaim
 metadata:
   namespace: cicd
   name: pnpm-cache-pvc
+  annotations:
+    argocd.argoproj.io/ignore-healthcheck: "true"
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 2Gi
@@ -17,9 +19,11 @@ kind: PersistentVolumeClaim
 metadata:
   namespace: cicd
   name: next-cache-pvc
+  annotations:
+    argocd.argoproj.io/ignore-healthcheck: "true"
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 2Gi
