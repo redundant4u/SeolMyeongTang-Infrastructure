@@ -11,7 +11,7 @@ if [ "$ARCH" = "arm64" ]; then
     MOZ_ARCH="linux-aarch64"
     echo "Detected Architecture: ARM64"
 else
-    MOZ_ARCH="linux64"
+    MOZ_ARCH="linux-x86_64"
     echo "Detected Architecture: AMD64 (x86_64)"
 fi
 

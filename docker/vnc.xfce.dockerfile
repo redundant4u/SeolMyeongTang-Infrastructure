@@ -16,9 +16,9 @@ RUN apt-get install -y \
     sudo \
     && rm -rf /var/lib/apt/lists/*
 
-COPY docker/data/vnc/xstartup.debain-xfce /xstartup
-COPY docker/data/vnc/entrypoint.debain-xfce.sh /entrypoint.sh
-COPY docker/data/vnc/vncserver.debain-xfce.sh /vncserver.sh
+COPY docker/data/vnc/xstartup.debian-xfce /xstartup
+COPY docker/data/vnc/entrypoint.debian-xfce.sh /entrypoint.sh
+COPY docker/data/vnc/vncserver.debian-xfce.sh /vncserver.sh
 
 ENTRYPOINT ["/usr/bin/tini", "-g", "--"]
 CMD ["/entrypoint.sh"]
