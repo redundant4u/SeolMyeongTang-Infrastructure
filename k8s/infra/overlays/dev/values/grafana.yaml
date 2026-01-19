@@ -1,0 +1,21 @@
+adminUser: admin
+adminPassword: wjstjf97
+
+testFramework:
+  enabled: false
+
+service:
+  type: NodePort
+  nodePort: 32001
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+
+persistence:
+  enabled: true
+  size: 5Gi

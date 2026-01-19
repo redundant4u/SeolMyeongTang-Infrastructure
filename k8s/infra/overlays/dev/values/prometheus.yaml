@@ -1,0 +1,94 @@
+server:
+  global:
+    scrape_interval: 1m
+    scrape_timeout: 30s
+
+  image:
+    tag: "v3.8.1"
+
+  service:
+    type: NodePort
+    nodePort: 30900
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+
+  retention: "7d"
+
+  persistentVolume:
+    enabled: true
+    size: 10Gi
+
+serverFiles:
+  prometheus.yml:
+    scrape_configs:
+    - job_name: rpi-node-exporter
+      static_configs:
+      - targets:
+          - node-exporter-prometheus-node-exporter.monitoring.svc.cluster.local:9100
+        labels:
+          component: node-exporter
+    - job_name: rpi-kube-state-metrics
+      static_configs:
+      - targets:
+          - kube-state-metrics.monitoring.svc.cluster.local:8080
+        labels:
+          component: kube-state-metrics
+    rule_files:
+    - /etc/config/recording_rules.yml
+    - /etc/config/alerting_rules.yml
+    ## Below two files are DEPRECATED will be removed from this default values file
+    - /etc/config/rules
+    - /etc/config/alerts
+
+scrapeConfigs:
+  kubernetes-api-servers:
+    enabled: false
+  kubernetes-service-endpoints:
+    enabled: false
+  kubernetes-service-endpoints-slow:
+    enabled: false
+  kubernetes-pods:
+    enabled: true
+    relabel_configs:
+    - target_label: env
+      replacement: dev
+    - target_label: cluster
+      replacement: rpi
+  kubernetes-pods-slow:
+    enabled: false
+  kubernetes-services:
+    enabled: false
+  kubernetes-nodes:
+    enabled: true
+    relabel_configs:
+    - target_label: env
+      replacement: dev
+    - target_label: cluster
+      replacement: rpi
+  kubernetes-nodes-cadvisor:
+    enabled: true
+    relabel_configs:
+    - target_label: env
+      replacement: dev
+    - target_label: cluster
+      replacement: rpi
+  prometheus-pushgateway:
+    enabled: false
+
+alertmanager:
+  enabled: false
+
+kube-state-metrics:
+  enabled: false
+
+prometheus-node-exporter:
+  enabled: false
+
+prometheus-pushgateway:
+  enabled: false
