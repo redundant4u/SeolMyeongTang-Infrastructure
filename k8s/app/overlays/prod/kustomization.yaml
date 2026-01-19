@@ -11,7 +11,7 @@ resources:
 images:
   - name: smt
     newName: 982402893832.dkr.ecr.ap-northeast-2.amazonaws.com/smt-server
-    newTag: "2.0.3"
+    newTag: "2.0.4"
 
   - name: vnc-proxy
     newName: 982402893832.dkr.ecr.ap-northeast-2.amazonaws.com/smt-vnc-proxy
