@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: smt
 spec:
+  runtimeClassName: kata-qemu-runtime-rs
   template:
     spec:
       imagePullSecrets:

@@ -4,3 +4,11 @@ kind: Kustomization
 resources:
   - ../../base
   - namespace.yaml
+
+helmCharts:
+  - name: kata-deploy
+    releaseName: kata-deploy
+    namespace: kube-system
+    repo: "oci://ghcr.io/kata-containers/kata-deploy-charts/kata-deploy"
+    version: "3.26.0"
+    valuesFile: values/kata-containers.yaml
