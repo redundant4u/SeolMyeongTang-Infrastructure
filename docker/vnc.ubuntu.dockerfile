@@ -46,7 +46,9 @@ COPY docker/data/vnc/vncserver.ubuntu.sh /vncserver.sh
 
 COPY docker/data/vnc/install_firefox.sh /install_firefox.sh
 
-RUN /install_firefox.sh && rm /install_firefox.sh
+RUN /install_firefox.sh && rm /install_firefox.sh && \
+    echo 'Acquire::http::Proxy "http://vnc-gateway:3128";' > /etc/apt/apt.conf.d/95proxy && \
+    echo 'Acquire::https::Proxy "http://vnc-gateway:3128";' >> /etc/apt/apt.conf.d/95proxy
 
 ENTRYPOINT ["/usr/bin/tini", "-g", "--"]
 CMD ["/entrypoint.sh"]

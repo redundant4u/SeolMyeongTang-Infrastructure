@@ -9,12 +9,6 @@ useradd -m -s /bin/bash "$USER_NAME"
 echo "$USER_NAME:$USER_PASSWORD" | chpasswd
 usermod -aG sudo "$USER_NAME"
 
-# mkdir -p /var/lib/dbus
-# if [ ! -f /var/lib/dbus/machine-id ]; then
-#     dbus-uuidgen > /var/lib/dbus/machine-id
-#     ln -sf /var/lib/dbus/machine-id /etc/machine-id
-# fi
-
 # DBus 런타임 디렉토리 생성
 # '/run/dbus' 디렉토리가 없으면 소켓을 만들지 못해 에러가 발생합니다.
 mkdir -p /run/dbus

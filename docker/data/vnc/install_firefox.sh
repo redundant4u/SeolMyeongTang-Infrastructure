@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-FIREFOX_VERSION="145.0.2"
+FIREFOX_VERSION="147.0.2"
 
 echo "Installing Firefox ${FIREFOX_VERSION}..."
 
