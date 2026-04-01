@@ -31,6 +31,14 @@ controller:
       welcome-message: |
         jenkins:
           systemMessage: "Welcome to SMT Jenkins"
+  
+  installPlugins:
+    - kubernetes
+    - workflow-aggregator
+    - git:5.8.1
+    - configuration-as-code:2036.v0b_c2de701dcb_
+  installLatestPlugins: false
+  initializeOnce: true
 
 persistence:
   enabled: true
