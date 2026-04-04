@@ -37,5 +37,12 @@ shims:
     enabled: false
   qemu-snp:
     enabled: false
+  qemu-snp-runtime-rs:
+    enabled: false
   qemu-tdx:
     enabled: false
+  qemu-tdx-runtime-rs:
+    enabled: false
+
+defaultShim:
+  amd64: "qemu-runtime-rs"
