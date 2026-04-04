@@ -3,9 +3,9 @@ kind: Deployment
 metadata:
   name: smt
 spec:
-  runtimeClassName: kata-qemu-runtime-rs
   template:
     spec:
+      revisionHistoryLimit: 2
       imagePullSecrets:
         - name: ecr-secret
       containers:

@@ -5,6 +5,7 @@ metadata:
 spec:
   template:
     spec:
+      revisionHistoryLimit: 3
       imagePullSecrets:
         - name: ecr-secret
       containers:
