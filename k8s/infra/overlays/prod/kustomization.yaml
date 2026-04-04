@@ -9,6 +9,6 @@ helmCharts:
   - name: kata-deploy
     releaseName: kata-deploy
     namespace: kube-system
-    repo: "oci://ghcr.io/kata-containers/kata-deploy-charts/kata-deploy"
-    version: "3.26.0"
+    repo: "oci://ghcr.io/kata-containers/kata-deploy-charts"
+    version: "3.28.0"
     valuesFile: values/kata-containers.yaml
