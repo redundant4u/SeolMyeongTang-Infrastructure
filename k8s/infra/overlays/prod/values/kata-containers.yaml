@@ -2,7 +2,7 @@
 # helm upgrade kata-deploy oci://ghcr.io/kata-containers/kata-deploy-charts/kata-deploy --namespace kube-system -f values.yaml
 
 image:
-  tag: "3.24.0"
+  tag: "3.28.0"
 
 k8sDistribution: "k3s"
 
