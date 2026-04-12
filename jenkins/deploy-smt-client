@@ -1,0 +1,165 @@
+pipeline {
+    agent {
+        kubernetes {
+            yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+    - name: node
+      image: node:24.12-alpine
+      command: ["sh", "-c", "sleep infinity"]
+      volumeMounts:
+        - name: pnpm-cache
+          mountPath: /root/.local/share/pnpm/store
+        - name: next-cache
+          mountPath: /next-cache
+    - name: aws-cli
+      image: amazon/aws-cli:2.32.22
+      command: ["sh", "-c", "sleep infinity"]
+  volumes:
+    - name: pnpm-cache
+      persistentVolumeClaim:
+        claimName: pnpm-cache-pvc
+    - name: next-cache
+      persistentVolumeClaim:
+        claimName: next-cache-pvc
+"""
+        }
+    }
+
+    options {
+        timeout(time: 10, unit: 'MINUTES')
+    }
+
+    environment {
+        AWS_REGION = "ap-northeast-2"
+    }
+
+    parameters {
+        string(name: 'VERSION', defaultValue: '0.0.1')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: '*/main']],
+                        extensions: [
+                            [$class: 'CloneOption', depth: 1, shallow: true, noTags: true]
+                        ],
+                        userRemoteConfigs: [[
+                            url: 'https://github.com/redundant4u/SeolMyeongTang.git',
+                        ]],
+                    ])
+                }
+            }
+        }
+
+        stage('Create env file') {
+            steps {
+                withCredentials([file(credentialsId: 'SMT_CLIENT_ENV_FILE', variable: 'SMT_CLIENT_ENV_FILE')]) {
+                    sh "cp \$SMT_CLIENT_ENV_FILE .env"
+                }
+            }       
+        }
+
+        stage ('Build') {
+            steps {
+                container('node') {
+                    sh """
+                        corepack enable
+                        corepack prepare pnpm@10.24.0 --activate
+
+                        pnpm config set store-dir /root/.local/share/pnpm/store
+
+                        mkdir -p .next
+                        mkdir -p /next-cache/${JOB_NAME}
+                        ln -s /next-cache/${JOB_NAME} .next/cache
+
+                        pnpm i --frozen-lockfile
+                        NEXT_BUILD=true pnpm run build
+                    """
+                }
+            }
+        }
+
+        stage('Prepare to Deploy') {
+            steps {
+                // NOTE: 파일 권한 문제로 node container에서 실행
+                container('node') {
+                    sh """
+                        for file in \$(find ./out -name "*.html"); do mv "\$file" "\${file%%.html}"; done
+                        mv out/index out/index.html
+
+                        tar -zcf ${params.VERSION}.tar.gz out
+                    """
+                }
+            }
+        }
+
+        stage('Backup to S3') {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'SMT_AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID'),
+                    string(credentialsId: 'SMT_AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY'),
+                    string(credentialsId: 'SMT_S3_BACKUP_URI', variable: 'SMT_S3_BACKUP_URI')
+                ]) {
+                    container('aws-cli') {
+                        sh """
+                            aws s3 cp --region ${env.AWS_REGION} \
+                                ${params.VERSION}.tar.gz \
+                                ${SMT_S3_BACKUP_URI}/${params.VERSION}.tar.gz
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Sync S3') {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'SMT_AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID'),
+                    string(credentialsId: 'SMT_AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY'),
+                    string(credentialsId: 'SMT_S3_DEPLOY_URI', variable: 'SMT_S3_DEPLOY_URI')
+                ]) {
+                    container('aws-cli') {
+                        sh """
+                            aws s3 sync out ${SMT_S3_DEPLOY_URI} \
+                                --region ${env.AWS_REGION} \
+                                --exclude "*.*" \
+                                --content-type "text/html" \
+                                --delete
+
+                            aws s3 sync out ${SMT_S3_DEPLOY_URI} \
+                                --region ${env.AWS_REGION} \
+                                --exclude "*" \
+                                --include "*.png" --include "*.jpg" --include "*.jpeg" --include "*.json" --include "*.js" --include "*.css" --include "*.ico" --include "*.html" \
+                                --delete
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Invalidate CloudFront Cache') {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'SMT_AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID'),
+                    string(credentialsId: 'SMT_AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY'),
+                    string(credentialsId: 'SMT_CF_SMT_DISTRIBUTION_ID', variable: 'SMT_CF_SMT_DISTRIBUTION_ID')
+                ]) {
+                    container('aws-cli') {
+                        sh """
+                            aws cloudfront create-invalidation \
+                                --distribution-id ${SMT_CF_SMT_DISTRIBUTION_ID} \
+                                --paths "/*"
+                        """
+                    }
+                }
+            }
+        }
+    }
+}

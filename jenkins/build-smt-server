@@ -1,0 +1,105 @@
+pipeline {
+    agent {
+        kubernetes {
+            yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+    - name: buildkit
+      image: moby/buildkit:v0.26.2
+      command: ["sh", "-c", "sleep infinity"]
+      securityContext:
+        privileged: true
+    
+    - name: aws-cli
+      image: amazon/aws-cli:2.32.22
+      command: ["sh", "-c", "sleep infinity"]
+"""
+        }
+    }
+
+    options {
+        timeout(time: 10, unit: 'MINUTES')
+    }
+
+    parameters {
+        string(name: 'VERSION', defaultValue: '0.0.1')
+    }
+
+    environment {
+        AWS_REGION = "ap-northeast-2"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    extensions: [
+                        [$class: 'CloneOption', depth: 1, shallow: true, noTags: true]
+                    ],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/redundant4u/SeolMyeongTang-Server.git',
+
+                    ]],
+                ])
+            }
+        }
+
+        stage('Prepare ECR Auth') {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'SMT_AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID'),
+                    string(credentialsId: 'SMT_AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY')
+                ]) {
+                    container('aws-cli') {
+                        sh """
+                            aws sts get-caller-identity --query Account --output text > ${JENKINS_AGENT_WORKDIR}/aws_account_id
+                            aws ecr get-login-password --region ap-northeast-2 > ${JENKINS_AGENT_WORKDIR}/ecr_password
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Build & Push') {
+            steps {
+                container('buildkit') {
+                    sh """
+                        AWS_ACCOUNT_ID=\$(cat ${JENKINS_AGENT_WORKDIR}/aws_account_id)
+                        ECR_PASSWORD=\$(cat ${JENKINS_AGENT_WORKDIR}/ecr_password)
+
+                        ECR_URL=\${AWS_ACCOUNT_ID}.dkr.ecr.${env.AWS_REGION}.amazonaws.com
+                        AUTH_TOKEN=\$(echo -n "AWS:\${ECR_PASSWORD}" | base64 | tr -d '\n')
+
+                        mkdir -p ~/.docker
+                        cat <<EOF > ~/.docker/config.json
+{
+    "auths": {
+        "\$ECR_URL": {
+            "auth": "\$AUTH_TOKEN"
+        }
+    }
+}
+EOF
+
+                        IMAGE_NAME=\$ECR_URL/smt-server:${params.VERSION}
+                        CACHE_IMAGE=\$ECR_URL/smt-server:buildcache
+
+                        buildctl-daemonless.sh build \
+                            --progress plain \
+                            --frontend dockerfile.v0 \
+                            --local context=./go \
+                            --local dockerfile=./go \
+                            --opt platform=linux/amd64,linux/arm64 \
+                            --output type=image,name=\$IMAGE_NAME,push=true \
+                            --export-cache type=registry,ref=\$CACHE_IMAGE,mode=max \
+                            --import-cache type=registry,ref=\$CACHE_IMAGE
+                    """
+                }
+            }
+        }
+    }
+}

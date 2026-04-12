@@ -1,0 +1,55 @@
+pipeline {
+    agent any
+
+    options {
+        timeout(time: 10, unit: 'MINUTES')
+    }
+
+    parameters {
+        choice(
+            name: 'ENVIRONMENT',
+            choices: ['dev', 'prod'],
+            description: 'Deployment Environment'
+        )
+        string(name: 'VERSION', defaultValue: '0.0.1')
+    }
+
+    stages {
+        stage('Update version') {
+            steps {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    extensions: [
+                        [$class: 'LocalBranch', localBranch: 'main'],
+                        [$class: 'CloneOption', depth: 1, shallow: true, noTags: true]
+                    ],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/redundant4u/SeolMyeongTang-Infrastructure.git',
+                    ]]
+                ])
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'SMT_GITHUB_CREDENTIAL',
+                        usernameVariable: 'GIT_USERNAME',
+                        passwordVariable: 'GIT_PASSWORD'
+                    )
+                ]) {
+                    sh """
+                        cd k8s/app/overlays/${params.ENVIRONMENT}
+
+                        sed -i '/- name: smt/{n; n; s/newTag:.*/newTag: "'"${params.VERSION}"'"/;}' kustomization.yaml
+
+                        git config user.name "smt-jenkins"
+                        git config user.email "smt-jenkins@ci"
+
+                        git add kustomization.yaml
+                        git commit -m "ci: bump ${params.ENVIRONMENT} version to ${params.VERSION}"
+
+                        git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/redundant4u/SeolMyeongTang-Infrastructure.git main
+                    """
+                }
+            }
+        }
+    }
+}
